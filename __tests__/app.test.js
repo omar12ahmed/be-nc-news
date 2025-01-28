@@ -59,7 +59,6 @@ describe("app", () => {
         .expect(200)
         .then(({ body }) => {
           article = body.article;
-          console.log(article);
           id = article.article_id;
           expect(id).toEqual(1);
 
@@ -76,5 +75,23 @@ describe("app", () => {
           });
         });
     });
+    test("should respond with 404 with invalid id nunber", () => {
+      return request(app)
+        .get("/api/articles/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("No article found for article_id: 9999");
+        });
+    });
+
+    test("should respond with a 404 with wrong data type", () => {
+      return request(app)
+        .get("/api/articles/cat")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid data type");
+        });
+    });
   });
 });
+// res
