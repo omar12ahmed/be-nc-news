@@ -9,9 +9,14 @@ app.get("/api/topics", getAlltopics);
 app.get("/api/articles/:article_id", getArticleId);
 
 //  error handling midleware
-// app.all("*", () => {
-//   console.log("hello <<<<<<<<--------");
-// });
+
+app.use((err, req, res, next) => {
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    next();
+  }
+});
 
 app.all("*", (req, res) => {
   res.status(404).send({ error: "Endpoint not found" });
