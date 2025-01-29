@@ -4,7 +4,8 @@ const request = require("supertest");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
-const articles = require("../db/data/test-data/articles");
+const { string } = require("pg-format");
+const { toBeSortedBy } = require("jest-sorted");
 /* Set up your test imports here */
 beforeEach(() => {
   return seed(testData);
@@ -15,12 +16,12 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  test("should 404 when endpoint is invalid ", () => {
+  test("should respond with 404 when endpoint is invalid ", () => {
     return request(app)
       .get("/api/cats")
       .expect(404)
       .then((response) => {
-        expect(response.body).toEqual({ error: "Endpoint not found" });
+        expect(response.body).toEqual({ msg: "Endpoint not found" });
       });
   });
 
@@ -87,11 +88,63 @@ describe("app", () => {
     test("should respond with a 404 with wrong data type", () => {
       return request(app)
         .get("/api/articles/cat")
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Invalid data type");
+          expect(body.msg).toBe("Invalid Data Type");
         });
     });
+  });
+
+  describe("GET/api/articles", () => {
+    test("should respond with 200 with an array of article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toMatchObject({
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              comment_count: expect.any(Number),
+              article_img_url: expect.any(String),
+            });
+            expect(typeof article.votes).toBe("number");
+          });
+        });
+    });
+    test("should respond with 404  when endpoint is incorrect", () => {
+      return request(app)
+        .get("/api/cat")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Endpoint not found");
+        });
+    });
+
+    // test("should be sorted by date in descending order", () => {
+    //   return request(app)
+    //     .get("/api/articles")
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       expect(body.articles).toBeSortedBy("created_at", {
+    //         descending: true,
+    //       });
+    //     });
+    // });
+    // test("should respond with 200 with empty array of articles", () => {
+    //   return request(app)
+    //     .get("/api/articles")
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       console.log(body.articles);
+    //       let article = body.article;
+    //       article = [];
+
+    //       expect(body.article).toEqual([]);
+    //     });
+    // });
   });
 });
 // res
