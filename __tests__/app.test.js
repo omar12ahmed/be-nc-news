@@ -53,7 +53,7 @@ describe("app", () => {
         });
     });
   });
-  describe("GET api/articles/:article_id", () => {
+  describe("GET api/articles/", () => {
     test("200: should respond with an object containing article id", () => {
       return request(app)
         .get("/api/articles/1")
@@ -93,9 +93,8 @@ describe("app", () => {
           expect(body.msg).toBe("Invalid Data Type");
         });
     });
-  });
 
-  describe("GET/api/articles", () => {
+    // ---
     test("should respond with 200 with an array of article objects", () => {
       return request(app)
         .get("/api/articles")
@@ -123,28 +122,15 @@ describe("app", () => {
         });
     });
 
-    // test("should be sorted by date in descending order", () => {
-    //   return request(app)
-    //     .get("/api/articles")
-    //     .expect(200)
-    //     .then(({ body }) => {
-    //       expect(body.articles).toBeSortedBy("created_at", {
-    //         descending: true,
-    //       });
-    //     });
-    // });
-    // test("should respond with 200 with empty array of articles", () => {
-    //   return request(app)
-    //     .get("/api/articles")
-    //     .expect(200)
-    //     .then(({ body }) => {
-    //       console.log(body.articles);
-    //       let article = body.article;
-    //       article = [];
-
-    //       expect(body.article).toEqual([]);
-    //     });
-    // });
+    test("should be sorted by date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
   });
 });
-// res
