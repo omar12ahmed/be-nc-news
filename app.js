@@ -5,12 +5,14 @@ const { getAlltopics } = require("./controller/topics.controller");
 const {
   getArticleId,
   getArticles,
+  getCommentsByID,
 } = require("./controller/article.controller");
 
 app.get("/api", getEndpoints);
 app.get("/api/topics", getAlltopics);
 app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id/comments", getCommentsByID);
 
 //  error handling midleware
 

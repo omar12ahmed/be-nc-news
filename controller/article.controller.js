@@ -1,6 +1,8 @@
+const articles = require("../db/data/test-data/articles");
 const {
   selectArticleById,
   selectArticles,
+  selectCommentsByArticleId,
 } = require("../models/articles.model");
 
 const getArticleId = (req, res, next) => {
@@ -16,7 +18,6 @@ const getArticleId = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
-  // const body = req.body;
   selectArticles()
     .then((articles) => {
       // if (articles.length === 0) {
@@ -34,4 +35,22 @@ const getArticles = (req, res, next) => {
     });
 };
 
-module.exports = { getArticleId, getArticles };
+const getCommentsByID = (req, res, next) => {
+  console.log("in the controller");
+  const articleId = req.params.article_id;
+  console.log(req.params);
+  selectArticleById(articleId)
+    .then(() => {
+      return selectCommentsByArticleId(articleId);
+    })
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      next(err);
+    });
+};
+
+module.exports = { getArticleId, getArticles, getCommentsByID };
