@@ -4,7 +4,6 @@ const request = require("supertest");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
-const { string } = require("pg-format");
 const { toBeSortedBy } = require("jest-sorted");
 /* Set up your test imports here */
 beforeEach(() => {
