@@ -132,4 +132,57 @@ describe("app", () => {
         });
     });
   });
+  // -------
+  describe("GET api/articles article_id comments", () => {
+    test("should filter comments by a specific id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const comments = body.comments;
+          expect(Array.isArray(comments)).toBe(true);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                article_id: expect.any(Number),
+                author: expect.any(String),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+
+    test("should retun an empty array if there are no comments ", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
+    test("should retun a 404 if id doesnt exist ", () => {
+      return request(app)
+        .get("/api/articles/9999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("No article found for article_id: 9999");
+        });
+    });
+  });
+
+  test("should respond with 400 with incorrect data type", () => {
+    return request(app)
+      .get("/api/articles/cat/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Data Type");
+      });
+  });
 });
+
+// // 200 endpoint exsist e.g article/arti_id/commments
+// if comment didnt exsist it would be an empty array with 200
