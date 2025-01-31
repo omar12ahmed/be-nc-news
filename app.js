@@ -6,13 +6,17 @@ const {
   getArticleId,
   getArticles,
   getCommentsByID,
+  postCommentsByID,
 } = require("./controller/article.controller");
+
+app.use(express.json());
 
 app.get("/api", getEndpoints);
 app.get("/api/topics", getAlltopics);
 app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByID);
+app.post("/api/articles/:article_id/comments", postCommentsByID);
 
 //  error handling midleware
 
@@ -22,10 +26,15 @@ app.all("*", (req, res) => {
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ msg: "Invalid Data Type" });
+  } else if (err.code === "23502") {
+    res.status(400).send({ msg: "Missing required keys" });
+  } else if (err.code === "23503") {
+    res.status(404).send({ msg: "Username does not exist" });
   } else {
     next(err);
   }
 });
+
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });

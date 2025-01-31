@@ -182,7 +182,62 @@ describe("app", () => {
         expect(body.msg).toBe("Invalid Data Type");
       });
   });
-});
 
-// // 200 endpoint exsist e.g article/arti_id/commments
-// if comment didnt exsist it would be an empty array with 200
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("respond with a 201 containing the posted comment ", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({ username: "butter_bridge", body: "Hi World" })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.newComment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: "Hi World",
+            article_id: 1,
+            author: "butter_bridge",
+            votes: 0,
+            created_at: expect.any(String),
+          });
+        });
+    });
+
+    test("should return 400 if body is missing", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Missing required keys");
+        });
+    });
+
+    test("should return 404 if ID doesnt exist", () => {
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send({ username: "butter_bridge", body: "Hi World" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("No article found for article_id: 99999");
+        });
+    });
+
+    test("should return 404 if username does not exist in db", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({ username: "omar", body: "hi omar" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Username does not exist");
+        });
+    });
+    test("should return 400 if input is wrong data type", () => {
+      return request(app)
+        .post("/api/articles/cats/comments")
+        .send({ username: "butter_bridge", body: "Hi World" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Data Type");
+        });
+    });
+  });
+});
