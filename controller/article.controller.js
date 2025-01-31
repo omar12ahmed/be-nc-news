@@ -1,9 +1,9 @@
-const articles = require("../db/data/test-data/articles");
 const {
   selectArticleById,
   selectArticles,
   selectCommentsByArticleId,
   addCommentsByArticleId,
+  updateArticlesById,
 } = require("../models/articles.model");
 
 const getArticleId = (req, res, next) => {
@@ -24,8 +24,6 @@ const getArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
-      console.log(err);
-
       next(err);
     });
 };
@@ -40,8 +38,6 @@ const getCommentsByID = (req, res, next) => {
       res.status(200).send({ comments });
     })
     .catch((err) => {
-      console.log(err);
-
       next(err);
     });
 };
@@ -59,7 +55,21 @@ const postCommentsByID = (req, res, next) => {
       res.status(201).send({ newComment });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
+    });
+};
+
+const patchArticlesByVotes = (req, res, next) => {
+  const { inc_votes } = req.body;
+  const { article_id } = req.params;
+  selectArticleById(article_id)
+    .then(() => {
+      return updateArticlesById(inc_votes, article_id);
+    })
+    .then((updatedArticle) => {
+      res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => {
       next(err);
     });
 };
@@ -69,4 +79,5 @@ module.exports = {
   getArticles,
   getCommentsByID,
   postCommentsByID,
+  patchArticlesByVotes,
 };
