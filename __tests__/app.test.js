@@ -4,12 +4,11 @@ const request = require("supertest");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
-const { toBeSortedBy } = require("jest-sorted");
-/* Set up your test imports here */
+
 beforeEach(() => {
   return seed(testData);
 });
-/* Set up your beforeEach & afterAll functions here */
+
 afterAll(() => {
   return db.end();
 });
@@ -237,6 +236,62 @@ describe("app", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Invalid Data Type");
+        });
+    });
+  });
+
+  describe("PATCH /api/articles/2", () => {
+    test("should respond with 2000 containing the updated article", () => {
+      return request(app)
+        .patch("/api/articles/2")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.updatedArticle).toMatchObject({
+            article_id: 2,
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: 1,
+            article_img_url: expect.any(String),
+          });
+        });
+    });
+    test("should respond with 404 if article ID doesnt exsist ", () => {
+      return request(app)
+        .patch("/api/articles/9999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("No article found for article_id: 9999");
+        });
+    });
+    test("should respond with 400 if article ID is not valid", () => {
+      return request(app)
+        .patch("/api/articles/cat")
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Data Type");
+        });
+    });
+    test("should respond with 400 if Inc votes is not a number", () => {
+      return request(app)
+        .patch("/api/articles/2")
+        .send({ inc_votes: "cats" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Data Type");
+        });
+    });
+    test("should respond with 400 if Inc votes is an empty object", () => {
+      return request(app)
+        .patch("/api/articles/2")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Missing required keys");
         });
     });
   });

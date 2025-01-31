@@ -7,6 +7,7 @@ const {
   getArticles,
   getCommentsByID,
   postCommentsByID,
+  patchArticlesByVotes,
 } = require("./controller/article.controller");
 
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByID);
 app.post("/api/articles/:article_id/comments", postCommentsByID);
+app.patch("/api/articles/:article_id", patchArticlesByVotes);
 
 //  error handling midleware
 
