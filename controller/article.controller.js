@@ -3,6 +3,7 @@ const {
   selectArticleById,
   selectArticles,
   selectCommentsByArticleId,
+  addCommentsByArticleId,
 } = require("../models/articles.model");
 
 const getArticleId = (req, res, next) => {
@@ -20,13 +21,7 @@ const getArticleId = (req, res, next) => {
 const getArticles = (req, res, next) => {
   selectArticles()
     .then((articles) => {
-      // if (articles.length === 0) {
-      //   res.status(200).send([]);
-      // }
       res.status(200).send({ articles });
-
-      // console.log(articles);
-      // console.log(articles);
     })
     .catch((err) => {
       console.log(err);
@@ -36,9 +31,7 @@ const getArticles = (req, res, next) => {
 };
 
 const getCommentsByID = (req, res, next) => {
-  console.log("in the controller");
   const articleId = req.params.article_id;
-  console.log(req.params);
   selectArticleById(articleId)
     .then(() => {
       return selectCommentsByArticleId(articleId);
@@ -53,4 +46,27 @@ const getCommentsByID = (req, res, next) => {
     });
 };
 
-module.exports = { getArticleId, getArticles, getCommentsByID };
+const postCommentsByID = (req, res, next) => {
+  const { body } = req.body;
+  const { username } = req.body;
+  const { article_id } = req.params;
+
+  selectArticleById(article_id)
+    .then(() => {
+      return addCommentsByArticleId(article_id, body, username);
+    })
+    .then((newComment) => {
+      res.status(201).send({ newComment });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+
+module.exports = {
+  getArticleId,
+  getArticles,
+  getCommentsByID,
+  postCommentsByID,
+};
