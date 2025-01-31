@@ -61,9 +61,7 @@ const postCommentsByID = (req, res, next) => {
 
 const patchArticlesByVotes = (req, res, next) => {
   const { inc_votes } = req.body;
-  console.log(inc_votes, "<<<<<votes");
   const { article_id } = req.params;
-  console.log(article_id, "<<<<<<<id");
   selectArticleById(article_id)
     .then(() => {
       return updateArticlesById(inc_votes, article_id);
