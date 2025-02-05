@@ -4,6 +4,7 @@ const {
   selectCommentsByArticleId,
   addCommentsByArticleId,
   updateArticlesById,
+  deleteCommentsById,
 } = require("../models/articles.model");
 
 const getArticleId = (req, res, next) => {
@@ -74,10 +75,43 @@ const patchArticlesByVotes = (req, res, next) => {
     });
 };
 
+const removeCommentsById = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  deleteCommentsById(comment_id)
+    .then((deletedComment) => {
+      if (!deletedComment) {
+        res.status(404).send({ msg: "Comment does not exsist" });
+      } else {
+        res.status(204).send();
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getArticleId,
   getArticles,
   getCommentsByID,
   postCommentsByID,
   patchArticlesByVotes,
+  removeCommentsById,
 };
+
+// const removeCommentsById = (req, res, next) => {
+//   const { comment_id } = req.params;
+
+//   deleteCommentsById(comment_id)
+//     .then((comments) => {
+//       console.log(comments);
+
+//       res.status(204).send();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+
+//       next(err);
+//     });
+// };

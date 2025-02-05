@@ -241,7 +241,7 @@ describe("app", () => {
   });
 
   describe("PATCH /api/articles/2", () => {
-    test("should respond with 2000 containing the updated article", () => {
+    test("should respond with 200 containing the updated article", () => {
       return request(app)
         .patch("/api/articles/2")
         .send({ inc_votes: 1 })
@@ -292,6 +292,34 @@ describe("app", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Missing required keys");
+        });
+    });
+  });
+
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("should respond with 204 when the given comment ID is deleted", () => {
+      return request(app)
+        .delete("/api/comments/2")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+    test("should respond with a 404 if the comment does not exsist", () => {
+      return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment does not exsist");
+        });
+    });
+
+    test("should respond with 400 with invalid data type", () => {
+      return request(app)
+        .delete("/api/comments/cats")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Data Type");
         });
     });
   });

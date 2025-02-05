@@ -69,10 +69,22 @@ const updateArticlesById = (inc_votes, article_id) => {
     });
 };
 
+const deleteCommentsById = (comment_id) => {
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [
+      comment_id,
+    ])
+
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 module.exports = {
   selectArticleById,
   selectArticles,
   selectCommentsByArticleId,
   addCommentsByArticleId,
   updateArticlesById,
+  deleteCommentsById,
 };
