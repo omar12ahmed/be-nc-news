@@ -76,6 +76,13 @@ const deleteCommentsById = (comment_id) => {
     ])
 
     .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `Comment does not exsistf for ID: ${comment_id}`,
+        });
+      }
+
       return rows;
     });
 };

@@ -310,7 +310,7 @@ describe("app", () => {
         .delete("/api/comments/9999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Comment does not exsist");
+          expect(body.msg).toBe("Comment does not exsistf for ID: 9999");
         });
     });
 

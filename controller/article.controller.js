@@ -80,14 +80,11 @@ const removeCommentsById = (req, res, next) => {
 
   deleteCommentsById(comment_id)
     .then((deletedComment) => {
-      if (!deletedComment) {
-        res.status(404).send({ msg: "Comment does not exsist" });
-      } else {
-        res.status(204).send();
-      }
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
+      console.log(err);
     });
 };
 
