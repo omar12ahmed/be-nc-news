@@ -10,6 +10,7 @@ const {
   patchArticlesByVotes,
   removeCommentsById,
 } = require("./controller/article.controller");
+const { getUsers } = require("./controller/users.controller");
 
 app.use(express.json());
 
@@ -17,6 +18,7 @@ app.get("/api", getEndpoints);
 app.get("/api/topics", getAlltopics);
 app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles", getArticles);
+app.get("/api/users", getUsers);
 app.get("/api/articles/:article_id/comments", getCommentsByID);
 app.post("/api/articles/:article_id/comments", postCommentsByID);
 app.patch("/api/articles/:article_id", patchArticlesByVotes);

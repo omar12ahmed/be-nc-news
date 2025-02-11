@@ -84,7 +84,6 @@ const removeCommentsById = (req, res, next) => {
     })
     .catch((err) => {
       next(err);
-      console.log(err);
     });
 };
 
