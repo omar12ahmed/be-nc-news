@@ -20,9 +20,13 @@ const getArticleId = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
-  selectArticles()
+  console.log(req.query);
+  const { sort_by, order } = req.query;
+
+  selectArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
+      console.log(articles);
     })
     .catch((err) => {
       next(err);

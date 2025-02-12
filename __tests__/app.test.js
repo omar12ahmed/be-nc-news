@@ -341,4 +341,32 @@ describe("app", () => {
         });
     });
   });
+  describe(" GET/api/artciles with queries", () => {
+    test("should respond with 200 and articles sorted by votes in ASC order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=ASC")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("votes", {
+            ascending: true,
+          });
+        });
+    });
+    test("should with 400 for invalid sort_by column ", () => {
+      return request(app)
+        .get("/api/articles?sort_by=cat&order=ASC")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid input");
+        });
+    });
+    test("should with 400 for invalid order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=cat")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid input");
+        });
+    });
+  });
 });

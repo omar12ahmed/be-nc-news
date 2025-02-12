@@ -15,21 +15,34 @@ const selectArticleById = (article_id) => {
     });
 };
 
-const selectArticles = () => {
-  return db
+const selectArticles = (sort_by = "created_at", order = "DESC") => {
+  const validColumns = [
+    "title",
+    "topic",
+    "author",
+    "votes",
+    "created_at",
+    "comment_count",
+  ];
 
-    .query(
-      `SELECT articles.title,
-      articles.topic,
-      articles.author,
-      articles.votes,
-      articles.created_at,
-      articles.article_img_url,
-     COUNT(comments.comment_id) ::INT AS comment_count from articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at DESC`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "invalid input" });
+  }
+  if (order !== "ASC" && order !== "DESC") {
+    return Promise.reject({ status: 400, msg: "invalid input" });
+  }
+  const queryStr = `
+  SELECT articles.title,
+    articles.topic,
+    articles.author,
+    articles.votes,
+    articles.created_at,
+    articles.article_img_url,
+    COUNT(comments.comment_id) ::INT AS comment_count from articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+
+  return db.query(queryStr).then(({ rows }) => {
+    return rows;
+  });
 };
 
 const selectCommentsByArticleId = (article_id) => {
