@@ -26,9 +26,10 @@ const getArticles = (req, res, next) => {
   selectArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
-      console.log(articles);
     })
     .catch((err) => {
+      console.log(err);
+
       next(err);
     });
 };

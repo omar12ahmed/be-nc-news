@@ -32,7 +32,9 @@ const selectArticles = (sort_by = "created_at", order = "DESC") => {
     return Promise.reject({ status: 400, msg: "invalid input" });
   }
   const queryStr = `
-  SELECT articles.title,
+  SELECT 
+  articles.article_id,
+  articles.title,
     articles.topic,
     articles.author,
     articles.votes,
